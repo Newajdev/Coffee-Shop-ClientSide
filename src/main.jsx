@@ -4,25 +4,39 @@ import './index.css'
 import App from './App.jsx'
 import {
   createBrowserRouter,
+  Outlet,
   RouterProvider,
 } from "react-router-dom";
 import AddCoffee from './components/AddCoffee.jsx';
 import UpdateCoffee from './components/UpdateCoffee.jsx';
+import Coffee from './components/Coffee.jsx';
 
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App></App>,
+    element: <Outlet></Outlet>,
+    children: [
+      {
+        path: "/",
+        element: <App></App>,
+        loader: () => fetch('http://localhost:5000/coffee'),
+      },
+      {
+        path: "/coffee/:id",
+        element: <Coffee></Coffee>,
+        loader: ({params}) => fetch(`http://localhost:5000/coffee/${params.id}`),
+      }
+    ]
   },
   {
     path: "/add-coffee",
     element: <AddCoffee></AddCoffee>
   },
   {
-    path: "/update-coffee",
-    element: <UpdateCoffee></UpdateCoffee>
-    
+    path: "/update-coffee/:id",
+    element: <UpdateCoffee></UpdateCoffee>,
+    loader: ({params}) => fetch(`http://localhost:5000/coffee/${params.id}`),
   },
 ]);
 
